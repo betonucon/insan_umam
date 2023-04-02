@@ -10,72 +10,18 @@
     }
   </style>
 @endpush
-@push('datatable')
-<script type="text/javascript">
-        /*
-        Template Name: Color Admin - Responsive Admin Dashboard Template build with Twitter Bootstrap 4
-        Version: 4.6.0
-        Author: Sean Ngu
-        Website: http://www.seantheme.com/color-admin/admin/
-        */
-        
-        var handleDataTableFixedHeader = function() {
-            "use strict";
-            
-            if ($('#data-table-fixed-header').length !== 0) {
-                var table=$('#data-table-fixed-header').DataTable({
-                    searching:true,
-                    lengthChange:false,
-                    fixedHeader: {
-                        header: true,
-                        headerOffset: $('#header').height()
-                    },
-                    responsive: true,
-                    ajax:"{{ url('customer/getdata')}}",
-                      columns: [
-                        { data: 'seleksi' },
-                        { data: 'customer_code' },
-                        { data: 'customer' },
-                        
-                      ],
-                      
-                });
-                
-                
-            }
-        };
 
-        var TableManageFixedHeader = function () {
-            "use strict";
-            return {
-                //main function
-                init: function () {
-                    handleDataTableFixedHeader();
-                }
-            };
-        }();
-
-        
-        $(document).ready(function() {
-          TableManageFixedHeader.init();
-           
-        });
-
-        
-        
-    </script>
-@endpush
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Form Cost Center
+        Dokumen
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Cost Center</li>
+        <li class="active">Dokumen</li>
       </ol>
     </section>
 
@@ -103,33 +49,12 @@
                   
                     <div class="box-body">
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Cost Code</label>
-
-                        <div class="col-sm-4">
-                          <input type="text" name="cost" class="form-control input-sm" {{$disabled}} value="{{$data->cost}}" placeholder="Ketik...">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Customer</label>
-
-                        <div class="col-sm-3">
-                          <div class="input-group">
-                            <span class="input-group-addon" onclick="show_draft()"><i class="fa fa-search"></i></span>
-                            <input type="text" id="customer_code" name="customer_code" readonly class="form-control  input-sm" placeholder="0000">
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <input type="text" id="customer" readonly class="form-control input-sm"  value="{{$data->customer}}" placeholder="Ketik...">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Area / Location Project</label>
+                        <label for="inputEmail3" class="col-sm-3 control-label">Nama Dokumen</label>
 
                         <div class="col-sm-9">
-                          <input type="text" name="area" class="form-control input-sm"  value="{{$data->area}}" placeholder="Ketik...">
+                          <input type="text" name="dokumen" class="form-control input-sm"  value="{{$data->dokumen}}" placeholder="Ketik...">
                         </div>
                       </div>
-                      
                       
                     </div>
                     <!-- /.box-body -->
@@ -146,7 +71,7 @@
         
             <div class="btn-group">
               <button type="button" class="btn btn-info" onclick="simpan_data()">Simpan</button>
-              <button type="button" class="btn btn-danger" onclick="location.assign(`{{url('cost')}}`)">Kembali</button>
+              <button type="button" class="btn btn-danger" onclick="location.assign(`{{url('master/dokumen')}}`)">Kembali</button>
             </div>
                  
         </div>
@@ -245,7 +170,7 @@
                 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ url('cost') }}",
+                    url: "{{ url('master/dokumen') }}",
                     data: new FormData(form),
                     contentType: false,
                     cache: false,
@@ -261,7 +186,7 @@
                               title: "Success! berhasil upload!",
                               icon: "success",
                             });
-                            location.assign("{{url('cost')}}");
+                            location.assign("{{url('master/dokumen')}}");
                         }else{
                             document.getElementById("loadnya").style.width = "0px";
                             swal({

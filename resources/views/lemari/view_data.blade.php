@@ -16,12 +16,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Form customer Center
+        Form Lemari
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">customer Center</li>
+        <li class="active">Form Lemari</li>
       </ol>
     </section>
 
@@ -40,46 +40,21 @@
         </div>
         
         <div class="box-body">
-            <form class="form-horizontal" id="mydata" method="post" action="{{ url('customer') }}" enctype="multipart/form-data" >
+          <form class="form-horizontal" id="mydata" method="post" action="{{ url('barang/upload') }}" enctype="multipart/form-data" >
               @csrf
               <input type="hidden" name="id" value="{{$id}}">
-              
               <div class="row">
               
                 <div class="col-md-9">
                   
                     <div class="box-body">
-                      @if($id>0)
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Customer Code</label>
-
-                        <div class="col-sm-2">
-                          <input type="text" name="customer_code" class="form-control input-sm" {{$disabled}} value="{{$data->customer_code}}" placeholder="Ketik...">
-                        </div>
-                      </div>
-                      @endif
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Nama Customer</label>
-
-                        <div class="col-sm-6">
-                          <input type="text" name="customer" class="form-control input-sm"  value="{{$data->customer}}" placeholder="Ketik...">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Singkatan</label>
-
-                        <div class="col-sm-3">
-                          <input type="text" name="singkatan" class="form-control input-sm"  value="{{$data->singkatan}}" placeholder="Ketik...">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Alamat</label>
+                        <label for="inputEmail3" class="col-sm-3 control-label">Nama Lemari</label>
 
                         <div class="col-sm-9">
-                          <input type="text" name="alamat" class="form-control input-sm"  value="{{$data->alamat}}" placeholder="Ketik...">
+                          <input type="text" name="lemari" class="form-control input-sm"  value="{{$data->lemari}}" placeholder="Ketik...">
                         </div>
                       </div>
-                      
                       
                     </div>
                     <!-- /.box-body -->
@@ -96,23 +71,98 @@
         
             <div class="btn-group">
               <button type="button" class="btn btn-info" onclick="simpan_data()">Simpan</button>
-              <button type="button" class="btn btn-danger" onclick="location.assign(`{{url('customer')}}`)">Kembali</button>
+              <button type="button" class="btn btn-danger" onclick="location.assign(`{{url('master/lemari')}}`)">Kembali</button>
             </div>
                  
         </div>
         
       </div>
-      <!-- /.box -->
+     
 
     </section>
-    <!-- /.content -->
+      <div class="modal fade" id="modal-draf" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span></button>
+              <h4 class="modal-title">Default Modal</h4>
+            </div>
+            <div class="modal-body">
+              
+                <table id="data-table-fixed-header" width="100%" class="cell-border display">
+                    <thead>
+                        <tr>
+                            <th width="10%"></th>
+                            <th width="20%">Cust Code</th>
+                            <th >Nama Customer</th>
+                        </tr>
+                    </thead>
+                    
+                </table>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
   </div>
 @endsection
 
 @push('ajax')
     <script> 
-
-        
+       
+        function delete_data(id){
+           
+            swal({
+                title: "Yakin menghapus foto ini ?",
+                text: "data akan hilang dari foto produk ini",
+                type: "warning",
+                icon: "error",
+                showCancelButton: true,
+                align:"center",
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            }).then((willDelete) => {
+                if (willDelete) {
+                        $.ajax({
+                            type: 'GET',
+                            url: "{{url('barang/hapus_foto')}}",
+                            data: "id="+id,
+                            success: function(msg){
+                                swal("Success! berhasil terhapus!", {
+                                    icon: "success",
+                                });
+                                $('#tampil-foto').load("{{url('barang/modal_foto')}}?KD_Barang={{$data->KD_Barang}}");
+                            }
+                        });
+                    
+                    
+                } else {
+                    
+                }
+            });
+            
+        } 
+        function show_draft(){
+           
+            $('#modal-draf').modal('show');
+            var tables=$('#data-table-fixed-header').DataTable();
+                tables.ajax.url("{{ url('customer/getdata')}}").load();
+        } 
+        function pilih_customer(customer_code,customer){
+           
+            $('#modal-draf').modal('hide');
+            $('#customer_code').val(customer_code);
+            $('#customer').val(customer);
+            
+        } 
+       
         function simpan_data(){
             
             var form=document.getElementById('mydata');
@@ -120,7 +170,7 @@
                 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ url('customer') }}",
+                    url: "{{ url('master/lemari') }}",
                     data: new FormData(form),
                     contentType: false,
                     cache: false,
@@ -133,10 +183,10 @@
                         if(bat[1]=='ok'){
                             document.getElementById("loadnya").style.width = "0px";
                             swal({
-                              title: "Success! berhasil disimpan!",
+                              title: "Success! berhasil upload!",
                               icon: "success",
                             });
-                            location.assign("{{url('customer')}}");
+                            location.assign("{{url('master/lemari')}}");
                         }else{
                             document.getElementById("loadnya").style.width = "0px";
                             swal({

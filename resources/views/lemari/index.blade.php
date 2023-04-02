@@ -33,7 +33,7 @@
                     },
                     dom: 'lrtip',
                     responsive: true,
-                    ajax:"{{ url('cost/getdata')}}",
+                    ajax:"{{ url('master/lemari/getdata')}}",
                       columns: [
                         { data: 'id', render: function (data, type, row, meta) 
                             {
@@ -42,9 +42,8 @@
                         },
                         
                         { data: 'action' },
-                        { data: 'cost' },
-                        { data: 'customer' },
-                        { data: 'area' },
+                        { data: 'lemari' },
+                        { data: 'total' },
                         
                       ],
                       
@@ -96,12 +95,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Cost Center
+        Master Lemari
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Cost Center</li>
+        <li class="active">Master Lemari</li>
       </ol>
     </section>
 
@@ -124,8 +123,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="btn-group" style="margin-top:5%">
-                <button type="button" class="btn btn-success btn-sm" onclick="location.assign(`{{url('cost/view')}}?id={{encoder(0)}}`)"><i class="fa fa-plus"></i> Buat Baru</button>
-                <button type="button" class="btn btn-info btn-sm"><i class="fa fa-print"></i> Cetak</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="location.assign(`{{url('master/lemari/view')}}?id={{encoder(0)}}`)"><i class="fa fa-plus"></i> Buat Baru</button>
               </div>
               
             </div>
@@ -160,9 +158,8 @@
                             <th width="5%">No</th>
                             
                             <th width="5%"></th>
-                            <th width="15%">Cost</th>
-                            <th width="25%">Customer</th>
-                            <th>Area</th>
+                            <th>Lemari</th>
+                            <th width="15%">Total Rak</th>
                         </tr>
                     </thead>
                     
@@ -186,5 +183,41 @@
 @endsection
 
 @push('ajax')
-       
+<script> 
+      function delete_data(id){
+           
+           swal({
+               title: "Yakin menghapus data ini ?",
+               text: "data akan hilang dari data  ini",
+               type: "warning",
+               icon: "error",
+               showCancelButton: true,
+               align:"center",
+               confirmButtonClass: "btn-danger",
+               confirmButtonText: "Yes, delete it!",
+               closeOnConfirm: false
+           }).then((willDelete) => {
+               if (willDelete) {
+                   
+                       $.ajax({
+                           type: 'GET',
+                           url: "{{url('master/lemari/delete')}}",
+                           data: "id="+id,
+                           success: function(msg){
+                               swal("Success! berhasil terhapus!", {
+                                   icon: "success",
+                               });
+                               var tables=$('#data-table-fixed-header').DataTable();
+                                  tables.ajax.url("{{ url('master/lemari/getdata')}}").load();
+                           }
+                       });
+                   
+                    
+               } else {
+                   
+               }
+           });
+           
+       }   
+    </script>       
 @endpush

@@ -12,8 +12,10 @@ use Validator;
 use App\Models\User;
 use App\Models\Pengajuan;
 use App\Models\Dokumen;
+use App\Models\VRak;
 use App\Models\VDokumenPengajuan; 
 use App\Models\DokumenPengajuan; 
+use App\Models\VLemari; 
 use App\Models\VPengajuan; 
 use App\Models\LogPengajuan; 
 
@@ -27,11 +29,25 @@ class PengajuanController extends Controller
         return view('pengajuan.index',compact('template'));
         
     }
+    public function index_log(request $request)
+    {
+        error_reporting(0);
+        $template='top';
+        return view('pengajuan.index_log',compact('template'));
+        
+    }
     public function index_arsip(request $request)
     {
         error_reporting(0);
         $template='top';
         return view('pengajuan.index_arsip',compact('template'));
+        
+    }
+    public function index_arsip_keluar(request $request)
+    {
+        error_reporting(0);
+        $template='top';
+        return view('pengajuan.index_arsip_keluar',compact('template'));
         
     }
 
@@ -96,8 +112,12 @@ class PengajuanController extends Controller
     {
         error_reporting(0);
         $query = VPengajuan::query();
-        
-        $data = $query->where('status','!=',0)->orderBy('waktu','Asc')->get();
+        if($request->kate==1){
+            $data = $query->where('status',3);
+        }else{
+            $data = $query->whereIn('status',array(1,2));
+        }
+        $data = $query->orderBy('waktu','Asc')->get();
 
         return Datatables::of($data)
             ->addColumn('waktunya', function ($row) {
@@ -136,7 +156,7 @@ class PengajuanController extends Controller
                 }else{
                     $btn='
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         Act <i class="fa fa-sort-desc"></i> 
                         </button>
                         <ul class="dropdown-menu">
@@ -151,11 +171,92 @@ class PengajuanController extends Controller
             ->rawColumns(['action','waktunya','prosesnya'])
             ->make(true);
     }
+    public function get_data_dashboard(request $request)
+    {
+        error_reporting(0);
+        $id=$request->id;
+        if($id==1){
+            $data=VPengajuan::whereIn('status',array(1,2))->orderBy('waktu','Asc')->get();
+        }
+        if($id==2){
+            $data=VPengajuan::whereIn('status',array(3))->orderBy('waktu','Asc')->get();
+        }
+        if($id==3){
+            $data=VPengajuan::whereIn('status',array(1,2))->where('waktu','<=',7)->where('waktu','>=',0)->orderBy('waktu','Asc')->get();
+        }
+        if($id==4){
+            $data=VPengajuan::whereIn('status',array(1,2))->where('waktu','<',0)->orderBy('waktu','Asc')->get();
+        }
+
+        return Datatables::of($data)
+            ->addColumn('waktunya', function ($row) {
+                if($row->waktu>30){
+                    $btn='<font color="#000"><b>'.$row->waktu.' Hari</b></font>';
+                }else{
+                    $btn='<font color="red"><b>'.$row->waktu.' Hari</b></font>';
+                }
+                return $btn;
+            })
+            ->addColumn('prosesnya', function ($row) {
+                if($row->proses>1){
+                    $btn='<font color="red"><b>'.$row->proses.'X</b></font>';
+                }else{
+                    $btn='<font color="#000"><b>'.$row->proses.'X</b></font>';
+                }
+                
+                return $btn;
+            })
+            ->addColumn('action', function ($row) {
+                if($row->status!=3){
+                    
+                        $btn='
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                Act <i class="fa fa-sort-desc"></i> 
+                                </button>
+                                <ul class="dropdown-menu">
+                                        <li><a href="javascript:;" onclick="location.assign(`'.url('pengajuan/view').'?id='.encoder($row->id).'`)">View</a></li>
+                                        <li><a href="javascript:;"  onclick="delete_data(`'.encoder($row->id).'`)">Delete</a></li>
+                                        
+                                </ul>
+                            </div>
+                        ';
+                   
+                }else{
+                    $btn='
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Act <i class="fa fa-sort-desc"></i> 
+                        </button>
+                        <ul class="dropdown-menu">
+                                <li><a href="javascript:;" onclick="location.assign(`'.url('pengajuan/view').'?id='.encoder($row->id).'`)">View</a></li>
+                        </ul>
+                    </div>
+                    ';
+                }
+                return $btn;
+            })
+           
+            ->rawColumns(['action','waktunya','prosesnya'])
+            ->make(true);
+    }
+    public function proses_dokumen(request $request){
+        $mst=DokumenPengajuan::where('id',$request->id)->first();
+        if($mst->sts==1){
+            $data=DokumenPengajuan::where('id',$request->id)->update(['sts'=>2,'out_at'=>date('Y-m-d H:i:s')]);
+        }else{
+            $data=DokumenPengajuan::where('id',$request->id)->update(['sts'=>1,'out_in'=>date('Y-m-d H:i:s')]);
+        }
+    }
     public function get_data_arsip(request $request)
     {
         error_reporting(0);
         $query = VDokumenPengajuan::query();
-        
+        if($request->kate==1){
+            $data = $query->where('sts',2);
+        }else{
+            $data = $query->where('sts',1);
+        }
         $data = $query->orderBy('no_register','Asc')->get();
 
         return Datatables::of($data)
@@ -167,8 +268,18 @@ class PengajuanController extends Controller
                
                 return $btn;
             })
+            ->addColumn('icon', function ($row) {
+                if($row->sts==1){
+                    $btn='<span  class="btn btn-block btn-danger btn-xs" onclick="proses_dokumen('.$row->id.')">Out</span>';
+                }else{
+                    $btn='<span  class="btn btn-block btn-info btn-xs" onclick="proses_dokumen('.$row->id.')">In</span>';
+                }
+                  
+               
+                return $btn;
+            })
            
-            ->rawColumns(['action','waktunya','prosesnya'])
+            ->rawColumns(['action','icon','prosesnya'])
             ->make(true);
     }
     
@@ -194,6 +305,7 @@ class PengajuanController extends Controller
                 <tr style="background:#fff" >
                     <td style="padding: 2px 2px 2px 8px;">'.($no+1).'</td>
                     <td style="padding: 2px 2px 2px 8px;">'.$o->dokumen.'</td>
+                    <td style="padding: 2px 2px 2px 8px;">'.sts_dok($request->id,$o->id).'</td>
                     <td style="padding: 2px 2px 2px 8px;">'.lemari($request->id,$o->id).'</td>
                     <td style="padding: 2px 2px 2px 8px;">'.rak($request->id,$o->id).'</td>
                     <td style="padding: 2px 2px 2px 8px;"><a href="'.url_plug().'/dokumen/'.file_dokumen($request->id,$o->id).'" target="_blank">'.file_dokumen($request->id,$o->id).'</a></td>
@@ -484,7 +596,9 @@ class PengajuanController extends Controller
                 $data=DokumenPengajuan::UpdateOrcreate([
                     'pengajuan_id'=>$request->pengajuan_id,
                     'dokumen_id'=>$request->dokumen_id,
+                    'sts'=>1,
                 ],[
+                    'out_in'=>date('Y-m-d H:i:s'),
                     'lemari_id'=>$request->lemari_id,
                     'rak_id'=>$request->rak_id,
                     'file'=>$filePath,

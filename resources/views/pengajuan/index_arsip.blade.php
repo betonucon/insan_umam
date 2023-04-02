@@ -42,6 +42,7 @@
                             } 
                         },
                         
+                        { data: 'icon' },
                         { data: 'no_register' },
                         { data: 'nama' },
                         { data: 'dokumen' },
@@ -100,7 +101,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Dokumen Arsip
+        Dokumen Arsip Masuk
         
       </h1>
       <ol class="breadcrumb">
@@ -155,6 +156,7 @@
                     <thead>
                         <tr>
                             <th width="5%">No</th>
+                            <th width="5%"></th>
                             <th width="15%">No Register</th>
                             <th >Nama</th>
                             <th width="20%">Dokumen</th>
@@ -262,11 +264,11 @@
           $('#tampil_timeline').load("{{url('project/timeline')}}?id="+id)
       }
 
-      function delete_data(id){
+      function proses_dokumen(id){
             
             swal({
-                title: "Yakin menghapus data ini ?",
-                text: "data akan hilang dari data  ini",
+                title: "Yakin mengeluarkan dokumen ini ?",
+                text: "dokumen akan keluar dari arsip masuk",
                 type: "warning",
                 icon: "error",
                 showCancelButton: true,
@@ -279,14 +281,14 @@
                       
                         $.ajax({
                             type: 'GET',
-                            url: "{{url('pengajuan/delete')}}",
+                            url: "{{url('arsip/proses_dokumen')}}",
                             data: "id="+id,
                             success: function(msg){
-                                swal("Success! berhasil terhapus!", {
+                                swal("Success! berhasil diproses!", {
                                     icon: "success",
                                 });
                                 var tables=$('#data-table-fixed-header').DataTable();
-                                    tables.ajax.url("{{ url('pengajuan/getdata')}}").load();
+                                    tables.ajax.url("{{ url('arsip/getdata')}}").load();
                             }
                         });
                     

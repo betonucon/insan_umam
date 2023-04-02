@@ -33,7 +33,7 @@
                     },
                     dom: 'lrtip',
                     responsive: true,
-                    ajax:"{{ url('employe/getdata')}}",
+                    ajax:"{{ url('master/dokumen/getdata')}}",
                       columns: [
                         { data: 'id', render: function (data, type, row, meta) 
                             {
@@ -42,10 +42,7 @@
                         },
                         
                         { data: 'action' },
-                        { data: 'nik' },
-                        { data: 'nama' },
-                        { data: 'jabatan' },
-                        { data: 'role' },
+                        { data: 'dokumen' },
                         
                       ],
                       
@@ -68,28 +65,28 @@
             };
         }();
 
-        
+        function pilih_jenis(KD_Divisi){
+          var tables=$('#data-table-fixed-header').DataTable();
+          tables.ajax.url("{{ url('barang/getdata')}}?KD_Divisi="+KD_Divisi).load();
+          tables.on( 'draw', function () {
+              var count=tables.data().count();
+                $('#count_data').html('Total data :'+count)  
+          } );
+              
+        }
         function load_data(){  
-              $.getJSON("{{ url('employe/getrole')}}", function(data){
+              $.getJSON("{{ url('cost/getrole')}}", function(data){
                   $.each(data, function(i, result){
                       $("#tampil-dashboard-role").append(result.action);
                   });
               });
         }
-
         $(document).ready(function() {
           TableManageFixedHeader.init();
-          load_data().load();     
+          load_data();     
         });
 
-        function show_hide(){
-            var tables=$('#data-table-fixed-header').DataTable();
-                tables.ajax.url("{{ url('employe/getdata')}}?hide=1").load();
-        }
-        function refresh_data(){
-            var tables=$('#data-table-fixed-header').DataTable();
-                tables.ajax.url("{{ url('employe/getdata')}}").load();
-        }
+        
     </script>
 @endpush
 @section('content')
@@ -97,12 +94,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Mst Barang
+        Dokumen
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Barang</li>
+        <li class="active">Dokumen</li>
       </ol>
     </section>
 
@@ -114,11 +111,7 @@
       </div>
       <div class="box box-default">
         <div class="box-header with-border">
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default" onclick="show_hide()" title="Log Hidden"><i class="fa fa-trash-o"></i></button>
-            <button type="button" class="btn btn-sm btn-default" onclick="refresh_data()"  title="Refresh Page"><i class="fa fa-refresh"></i></button>
-            <button type="button" class="btn btn-sm btn-default"><i class="fa fa-cog"></i></button>
-          </div>
+          <h3 class="box-title"></h3>
 
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -129,8 +122,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="btn-group" style="margin-top:5%">
-                <button type="button" class="btn btn-success btn-sm" onclick="location.assign(`{{url('employe/view')}}?id={{encoder(0)}}`)"><i class="fa fa-plus"></i> Buat Baru</button>
-                <button type="button" class="btn btn-info btn-sm"><i class="fa fa-print"></i> Cetak</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="location.assign(`{{url('master/dokumen/view')}}?id={{encoder(0)}}`)"><i class="fa fa-plus"></i> Buat Baru</button>
               </div>
               
             </div>
@@ -165,10 +157,7 @@
                             <th width="5%">No</th>
                             
                             <th width="5%"></th>
-                            <th width="15%">NIK</th>
-                            <th>Nama</th>
-                            <th width="15%">Jabatan</th>
-                            <th width="15%">Otorisasi</th>
+                            <th>Dokumen</th>
                         </tr>
                     </thead>
                     
@@ -192,8 +181,8 @@
 @endsection
 
 @push('ajax')
-    <script> 
-      function delete_data(id,act){
+<script> 
+      function delete_data(id){
            
            swal({
                title: "Yakin menghapus data ini ?",
@@ -207,40 +196,26 @@
                closeOnConfirm: false
            }).then((willDelete) => {
                if (willDelete) {
-                    if(act=='0'){
+                   
                        $.ajax({
                            type: 'GET',
-                           url: "{{url('employe/delete')}}",
-                           data: "id="+id+"&act="+act,
+                           url: "{{url('master/dokumen/delete')}}",
+                           data: "id="+id,
                            success: function(msg){
                                swal("Success! berhasil terhapus!", {
                                    icon: "success",
                                });
                                var tables=$('#data-table-fixed-header').DataTable();
-                                  tables.ajax.url("{{ url('employe/getdata')}}").load();
+                                  tables.ajax.url("{{ url('master/dokumen/getdata')}}").load();
                            }
                        });
                    
-                    }else{
-                      $.ajax({
-                           type: 'GET',
-                           url: "{{url('employe/delete')}}",
-                           data: "id="+id+"&act="+act,
-                           success: function(msg){
-                               swal("Success! berhasil ditampilkan!", {
-                                   icon: "success",
-                               });
-                               var tables=$('#data-table-fixed-header').DataTable();
-                                  tables.ajax.url("{{ url('employe/getdata')}}?hide=1").load();
-                           }
-                       });
-                    }
-                    $("#tampil-dashboard-role").load(); 
+                    
                } else {
                    
                }
            });
            
-      }   
-    </script>   
+       }   
+    </script>       
 @endpush

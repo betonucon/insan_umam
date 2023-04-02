@@ -189,6 +189,7 @@
                                   <tr style="background:#bcbcc7">
                                     <th style="width: 10px">No</th>
                                     <th>Dokumen</th>
+                                    <th width="5%">Status</th>
                                     <th width="8%">Lemari</th>
                                     <th width="8%">Rak</th>
                                     <th width="5%"></th>

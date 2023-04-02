@@ -7,7 +7,7 @@ use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\CostController;
-use App\Http\Controllers\KontrakController;
+use App\Http\Controllers\MasterController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\Auth\LogoutController;
 /*
@@ -54,32 +54,39 @@ Route::group(['prefix' => 'customer','middleware'    => 'auth'],function(){
     Route::get('/modal',[CustomerController::class, 'modal']);
     Route::post('/',[CustomerController::class, 'store']);
 });
-Route::group(['prefix' => 'material','middleware'    => 'auth'],function(){
-    Route::get('/',[MaterialController::class, 'index']);
-    Route::get('/masuk',[MaterialController::class, 'index_masuk']);
-    Route::get('/keluar',[MaterialController::class, 'index_keluar']);
-    Route::get('/view',[MaterialController::class, 'view_data']);
-    Route::get('/getdata',[MaterialController::class, 'get_data']);
-    Route::get('/get_material',[MaterialController::class, 'get_material']);
-    Route::get('/get_data_stok',[MaterialController::class, 'get_data_stok']);
-    Route::get('/getdataevent',[MaterialController::class, 'get_data_event']);
-    Route::get('/create_stok',[MaterialController::class, 'create_stok']);
-    Route::get('/delete',[MaterialController::class, 'delete']);
-    Route::get('/delete_stok',[MaterialController::class, 'delete_stok']);
-    Route::get('/modal',[MaterialController::class, 'modal']);
-    Route::post('/',[MaterialController::class, 'store']);
-    Route::post('/store_stok',[MaterialController::class, 'store_stok']);
+Route::group(['prefix' => 'master','middleware'    => 'auth'],function(){
+    Route::get('/dokumen/',[MasterController::class, 'index']);
+    Route::get('/dokumen/view',[MasterController::class, 'view_data']);
+    Route::get('/dokumen/getdata',[MasterController::class, 'get_data']);
+    Route::get('/dokumen/delete',[MasterController::class, 'delete']);
+    Route::post('/dokumen/',[MasterController::class, 'store']);
+
+    Route::get('/lemari/',[MasterController::class, 'index_lemari']);
+    Route::get('/lemari/view',[MasterController::class, 'view_data_lemari']);
+    Route::get('/lemari/getdata',[MasterController::class, 'get_data_lemari']);
+    Route::get('/lemari/delete',[MasterController::class, 'delete_lemari']);
+    Route::post('/lemari/',[MasterController::class, 'store_lemari']);
+
+    Route::get('/rak/',[MasterController::class, 'index_rak']);
+    Route::get('/rak/view',[MasterController::class, 'view_data_rak']);
+    Route::get('/rak/getdata',[MasterController::class, 'get_data_rak']);
+    Route::get('/rak/delete',[MasterController::class, 'delete_rak']);
+    Route::post('/rak/',[MasterController::class, 'store_rak']);
 });
 
 Route::group(['prefix' => 'arsip','middleware'    => 'auth'],function(){
     Route::get('/',[PengajuanController::class, 'index_arsip']);
+    Route::get('/proses_dokumen',[PengajuanController::class, 'proses_dokumen']);
+    Route::get('/out',[PengajuanController::class, 'index_arsip_keluar']);
     Route::get('/getdata',[PengajuanController::class, 'get_data_arsip']);
     
 });
 Route::group(['prefix' => 'pengajuan','middleware'    => 'auth'],function(){
     Route::get('/',[PengajuanController::class, 'index']);
+    Route::get('/riwayat',[PengajuanController::class, 'index_log']);
     Route::get('/view',[PengajuanController::class, 'view_data']);
     Route::get('/getdata',[PengajuanController::class, 'get_data']);
+    Route::get('/getdatadashboard',[PengajuanController::class, 'get_data_dashboard']);
     Route::get('/tampil_dokumen',[PengajuanController::class, 'tampil_dokumen']);
     Route::get('/rak',[PengajuanController::class, 'rak']);
     Route::get('/tampil_form',[PengajuanController::class, 'tampil_form']);

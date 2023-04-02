@@ -11,7 +11,7 @@
   </style>
 @endpush
 @push('datatable')
-<script type="text/javascript">
+    <script type="text/javascript">
         /*
         Template Name: Color Admin - Responsive Admin Dashboard Template build with Twitter Bootstrap 4
         Version: 4.6.0
@@ -34,7 +34,7 @@
                     },
                     dom: 'lrtip',
                     responsive: true,
-                    ajax:"{{ url('project/getdata')}}",
+                    ajax:"{{ url('pengajuan/getdata')}}?kate=1",
                       columns: [
                         { data: 'id', render: function (data, type, row, meta) 
                             {
@@ -43,13 +43,12 @@
                         },
                         
                         { data: 'action' },
-                        { data: 'timeline' },
-                        { data: 'customer' },
-                        { data: 'kategori_project' },
-                        { data: 'deskripsi_project' },
-                        { data: 'start_date' },
-                        { data: 'end_date' },
-                        { data: 'status_now' },
+                        { data: 'no_register' },
+                        { data: 'nik' },
+                        { data: 'nama' },
+                        { data: 'sampai' },
+                        { data: 'prosesnya' },
+                        { data: 'nama_status' },
                         
                       ],
                       
@@ -102,12 +101,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        List Project
+        Riwayat SKMHT
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">List Project</li>
+        <li class="active">Riwayat SKMHT</li>
       </ol>
     </section>
 
@@ -118,61 +117,22 @@
         
       </div>
       <div class="box box-default">
-        <div class="box-header with-border" style="border: dotted 2px #bebecb; background: #e8e8ef;">
-          <div class="row" >
-            <div class="col-md-4">
-              <ul class="nav nav-stacked">
-                
-              @foreach(get_status_board(1) as $get)
-              <li><a href="#" class="li-dashboard">{{$get->urut}}.{{$get->status}} <span class="pull-right badge bg-{{$get->color}}">{{$get->total}}</span></a></li>  
-              @endforeach
-               
-                
-              </ul>
-            </div>
-            <div class="col-md-4">
-              <ul class="nav nav-stacked">
-                
-              @foreach(get_status_board(2) as $get)
-              <li><a href="#" class="li-dashboard">{{$get->urut}}.{{$get->status}} <span class="pull-right badge bg-{{$get->color}}">{{$get->total}}</span></a></li>   
-              @endforeach
-               
-                
-              </ul>
-            </div>
-            <div class="col-md-4">
-              <ul class="nav nav-stacked">
-                
-              @foreach(get_status_board(3) as $get)
-              <li><a href="#" class="li-dashboard">{{$get->urut}}.{{$get->status}} <span class="pull-right badge bg-{{$get->color}}">{{$get->total}}</span></a></li>   
-              @endforeach
-               
-                
-              </ul>
-            </div>
-            
-          </div>
-
-        </div>
+        
         <div class="box-header with-border">
           <div class="row">
             <div class="col-md-5">
-              <div class="btn-group" style="margin-top:5%">
-                <button type="button" class="btn btn-info btn-sm"><i class="fa fa-print"></i> Cetak</button>
-              </div>
+              
               
             </div>
             <div class="col-md-3">
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label>Status Progres</label>
                   <select onchange="pilih_jenis(this.value)" class="form-control  input-sm">
                     <option value="">All Data</option>
-                    @foreach(get_status_event() as $get)
-                      <option value="{{$get->id}}">{{$get->status}}</option>
-                    @endforeach
+                    
                   </select>
                
-              </div>
+              </div> -->
             </div>
             <div class="col-md-4">
               <div class="form-group">
@@ -189,19 +149,18 @@
            
             <div class="col-md-12">
               <div class="table-responsive">
-                <table id="data-table-fixed-header" width="110%" class="cell-border display">
+                <table id="data-table-fixed-header" width="100%" class="display">
                     <thead>
                         <tr>
                             <th width="5%">No</th>
                             
                             <th width="5%"></th>
-                            <th width="4%"></th>
-                            <th width="15%">Customer</th>
-                            <th width="10%">Kategori</th>
-                            <th >Ruang Lingkup</th>
-                            <th width="10%">Start</th>
-                            <th width="10%">End</th>
-                            <th width="14%">Status</th>
+                            <th width="15%">No Register</th>
+                            <th width="15%">NO KTP</th>
+                            <th >Nama</th>
+                            <th width="10%">Duedate</th>
+                            <th width="6%">Ke</th>
+                            <th width="10%">status</th>
                         </tr>
                     </thead>
                     
@@ -304,7 +263,7 @@
           $('#tampil_timeline').load("{{url('project/timeline')}}?id="+id)
       }
 
-      function delete_data(id,act){
+      function delete_data(id){
             
             swal({
                 title: "Yakin menghapus data ini ?",
@@ -318,13 +277,48 @@
                 closeOnConfirm: false
             }).then((willDelete) => {
                 if (willDelete) {
-                      if(act=='0'){
+                      
                         $.ajax({
                             type: 'GET',
-                            url: "{{url('project/delete')}}",
-                            data: "id="+id+"&act="+act,
+                            url: "{{url('pengajuan/delete')}}",
+                            data: "id="+id,
                             success: function(msg){
                                 swal("Success! berhasil terhapus!", {
+                                    icon: "success",
+                                });
+                                var tables=$('#data-table-fixed-header').DataTable();
+                                    tables.ajax.url("{{ url('pengajuan/getdata')}}").load();
+                            }
+                        });
+                    
+                      
+                } else {
+                    
+                }
+            });
+            
+        } 
+      function send_data_to(id){
+            
+            swal({
+                title: "Yakin akan mengirim data keporses berikutnya ?",
+                text: "",
+                type: "warning",
+                icon: "info",
+                showCancelButton: true,
+                align:"center",
+                confirmButtonClass: "btn-info",
+                confirmButtonText: "Yes, cancel it!",
+                closeOnConfirm: false
+            }).then((willDelete) => {
+                if (willDelete) {
+                      
+                        $.ajax({
+                            type: 'GET',
+                            url: "{{url('project/kirim_kadis_komersil')}}",
+                            data: "id="+id,
+                            success: function(msg){
+                                swal("Success! berhasil terkirim!", {
                                     icon: "success",
                                 });
                                 var tables=$('#data-table-fixed-header').DataTable();
@@ -332,27 +326,13 @@
                             }
                         });
                     
-                      }else{
-                        $.ajax({
-                            type: 'GET',
-                            url: "{{url('project/delete')}}",
-                            data: "id="+id+"&act="+act,
-                            success: function(msg){
-                                swal("Success! berhasil ditampilkan!", {
-                                    icon: "success",
-                                });
-                                var tables=$('#data-table-fixed-header').DataTable();
-                                    tables.ajax.url("{{ url('project/getdata')}}?hide=1").load();
-                            }
-                        });
-                      }
-                      $("#tampil-dashboard-role").load(); 
+                      
                 } else {
                     
                 }
             });
             
-        } 
+      } 
         function show_file(file){
           $('#modal-file').modal('show');
           $('#tampil_file').show();

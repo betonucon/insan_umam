@@ -16,12 +16,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Form Employe
+        Form Rak
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Employe</li>
+        <li class="active">Form Rak</li>
       </ol>
     </section>
 
@@ -40,50 +40,31 @@
         </div>
         
         <div class="box-body">
-            <form class="form-horizontal" id="mydata" method="post" action="{{ url('barang/upload') }}" enctype="multipart/form-data" >
+          <form class="form-horizontal" id="mydata" method="post" action="{{ url('barang/upload') }}" enctype="multipart/form-data" >
               @csrf
               <input type="hidden" name="id" value="{{$id}}">
               <div class="row">
               
-                <div class="col-md-8">
+                <div class="col-md-9">
                   
                     <div class="box-body">
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">NIK</label>
+                        <label for="inputEmail3" class="col-sm-3 control-label">Lemari</label>
 
-                        <div class="col-sm-4">
-                          <input type="text" name="nik" class="form-control input-sm" {{$disabled}} value="{{$data->nik}}" placeholder="Ketik...">
+                        <div class="col-sm-5">
+                            <select name="lemari_id" @if($id>0) disabled @endif class="form-control input-sm"placeholder="Ketik...">
+                                <option value="">-Pilih---</option>
+                                @foreach(get_lemari() as $lem)
+                                  <option value="{{$lem->id}}" @if($data->lemari_id==$lem->id) selected @endif >{{$lem->lemari}}</option> 
+                                @endforeach
+                            </select>
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Nama</label>
+                        <label for="inputEmail3" class="col-sm-3 control-label">Nama Rak</label>
 
                         <div class="col-sm-9">
-                          <input type="text" name="nama" class="form-control input-sm"  value="{{$data->nama}}" placeholder="Ketik...">
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Jabatan</label>
-
-                        <div class="col-sm-4">
-                          <select class="form-control  input-sm" name="jabatan_id">
-                            <option value="">Pilih Jabatan----</option>
-                            @foreach(get_jabatan() as $jb)
-                              <option value="{{$jb->id}}" @if($data->jabatan_id==$jb->id) selected @endif >{{$jb->jabatan}}</option>
-                            @endforeach
-                          </select>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Otorisasi Sistem</label>
-
-                        <div class="col-sm-4">
-                          <select class="form-control  input-sm" name="role_id">
-                            <option value="">Pilih Otorisasi----</option>
-                            @foreach(get_role() as $jb)
-                              <option value="{{$jb->id}}" @if($data->role_id==$jb->id) selected @endif >{{$jb->role}}</option>
-                            @endforeach
-                          </select>
+                          <input type="text" name="rak" class="form-control input-sm"  value="{{$data->rak}}" placeholder="Ketik...">
                         </div>
                       </div>
                       
@@ -102,24 +83,52 @@
         
             <div class="btn-group">
               <button type="button" class="btn btn-info" onclick="simpan_data()">Simpan</button>
-              <button type="button" class="btn btn-danger" onclick="location.assign(`{{url('employe')}}`)">Kembali</button>
+              <button type="button" class="btn btn-danger" onclick="location.assign(`{{url('master/rak')}}`)">Kembali</button>
             </div>
                  
         </div>
         
       </div>
-      <!-- /.box -->
+     
 
     </section>
-    <!-- /.content -->
+      <div class="modal fade" id="modal-draf" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span></button>
+              <h4 class="modal-title">Default Modal</h4>
+            </div>
+            <div class="modal-body">
+              
+                <table id="data-table-fixed-header" width="100%" class="cell-border display">
+                    <thead>
+                        <tr>
+                            <th width="10%"></th>
+                            <th width="20%">Cust Code</th>
+                            <th >Nama Customer</th>
+                        </tr>
+                    </thead>
+                    
+                </table>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
   </div>
 @endsection
 
 @push('ajax')
     <script> 
-        $('#tampil-foto').load("{{url('barang/modal_foto')}}?KD_Barang={{$data->KD_Barang}}");
-
-        function hapus_foto(id){
+       
+        function delete_data(id){
            
             swal({
                 title: "Yakin menghapus foto ini ?",
@@ -152,39 +161,20 @@
             });
             
         } 
-        function aktif_foto(id){
+        function show_draft(){
            
-            swal({
-                title: "Yakin foto ini sebagai foto utama?",
-                text: "data akan tampil sebagai foto utama",
-                type: "warning",
-                icon: "info",
-                showCancelButton: true,
-                align:"center",
-                confirmButtonClass: "btn-danger",
-                confirmButtonText: "Yes, delete it!",
-                closeOnConfirm: false
-            }).then((willDelete) => {
-                if (willDelete) {
-                        $.ajax({
-                            type: 'GET',
-                            url: "{{url('barang/aktif_foto')}}",
-                            data: "id="+id,
-                            success: function(msg){
-                                swal("Success! berhasil diproses!", {
-                                    icon: "success",
-                                });
-                                $('#tampil-foto').load("{{url('barang/modal_foto')}}?KD_Barang={{$data->KD_Barang}}");
-                            }
-                        });
-                    
-                    
-                } else {
-                    
-                }
-            });
+            $('#modal-draf').modal('show');
+            var tables=$('#data-table-fixed-header').DataTable();
+                tables.ajax.url("{{ url('customer/getdata')}}").load();
+        } 
+        function pilih_customer(customer_code,customer){
+           
+            $('#modal-draf').modal('hide');
+            $('#customer_code').val(customer_code);
+            $('#customer').val(customer);
             
         } 
+       
         function simpan_data(){
             
             var form=document.getElementById('mydata');
@@ -192,7 +182,7 @@
                 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ url('employe') }}",
+                    url: "{{ url('master/rak') }}",
                     data: new FormData(form),
                     contentType: false,
                     cache: false,
@@ -208,7 +198,7 @@
                               title: "Success! berhasil upload!",
                               icon: "success",
                             });
-                            location.assign("{{url('employe')}}");
+                            location.assign("{{url('master/rak')}}");
                         }else{
                             document.getElementById("loadnya").style.width = "0px";
                             swal({

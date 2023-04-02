@@ -4,9 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>E-PROM</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <link href="{{url_plug()}}/img/ks.png" rel="icon">
+  <title>E-NOTARIS</title>
+  <link href="{{url_plug()}}/img/logo.png" rel="icon">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{url_plug()}}/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -271,13 +270,14 @@
                 <p>
                   @ {{Auth::user()->name}}
                   <small>Online</small>
+                  <small>{{date('d-m-y H:i:s')}}</small>
                 </p>
               </li>
               <!-- Menu Body -->
               
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                  <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
                 </div>
                 <div class="pull-right">
                   <a href="#" id="logout" class="btn btn-default btn-flat">Sign out</a>
@@ -304,8 +304,10 @@
         </div>
         <div class="pull-left info">
           <p>@ {{Auth::user()->name}}</p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a><br>
+          
         </div>
+        
       </div>
       <!-- search form -->
       
@@ -321,9 +323,9 @@
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 2.4.18
+      <b>Version</b> 1.0
     </div>
-    <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE</a>.</strong> All rights
+    <strong>Copyright &copy; 2023-2024 <a href="#">UMAM</a>.</strong> All rights
     reserved.
   </footer>
 

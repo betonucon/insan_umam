@@ -33,7 +33,7 @@
                     },
                     dom: 'lrtip',
                     responsive: true,
-                    ajax:"{{ url('customer/getdata')}}",
+                    ajax:"{{ url('master/rak/getdata')}}",
                       columns: [
                         { data: 'id', render: function (data, type, row, meta) 
                             {
@@ -42,9 +42,9 @@
                         },
                         
                         { data: 'action' },
-                        { data: 'customer_code' },
-                        { data: 'customer' },
-                        { data: 'alamat' },
+                        { data: 'rak' },
+                        { data: 'lemari' },
+                        { data: 'total' },
                         
                       ],
                       
@@ -67,20 +67,27 @@
             };
         }();
 
-        
+        function pilih_jenis(KD_Divisi){
+          var tables=$('#data-table-fixed-header').DataTable();
+          tables.ajax.url("{{ url('barang/getdata')}}?KD_Divisi="+KD_Divisi).load();
+          tables.on( 'draw', function () {
+              var count=tables.data().count();
+                $('#count_data').html('Total data :'+count)  
+          } );
+              
+        }
+        function load_data(){  
+              $.getJSON("{{ url('cost/getrole')}}", function(data){
+                  $.each(data, function(i, result){
+                      $("#tampil-dashboard-role").append(result.action);
+                  });
+              });
+        }
         $(document).ready(function() {
           TableManageFixedHeader.init();
-           
+          load_data();     
         });
 
-        function show_hide(){
-            var tables=$('#data-table-fixed-header').DataTable();
-                tables.ajax.url("{{ url('customer/getdata')}}?hide=1").load();
-        }
-        function refresh_data(){
-            var tables=$('#data-table-fixed-header').DataTable();
-                tables.ajax.url("{{ url('customer/getdata')}}").load();
-        }
         
     </script>
 @endpush
@@ -89,12 +96,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Customer
+        Master Lemari
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Customer</li>
+        <li class="active">Master Lemari</li>
       </ol>
     </section>
 
@@ -106,11 +113,7 @@
       </div>
       <div class="box box-default">
         <div class="box-header with-border">
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default" onclick="show_hide()" title="Log Hidden"><i class="fa fa-trash-o"></i></button>
-            <button type="button" class="btn btn-sm btn-default" onclick="refresh_data()"  title="Refresh Page"><i class="fa fa-refresh"></i></button>
-            <button type="button" class="btn btn-sm btn-default"><i class="fa fa-cog"></i></button>
-          </div>
+          <h3 class="box-title"></h3>
 
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -121,8 +124,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="btn-group" style="margin-top:5%">
-                <button type="button" class="btn btn-success btn-sm" onclick="location.assign(`{{url('customer/view')}}?id={{encoder(0)}}`)"><i class="fa fa-plus"></i> Buat Baru</button>
-                <button type="button" class="btn btn-info btn-sm"><i class="fa fa-print"></i> Cetak</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="location.assign(`{{url('master/rak/view')}}?id={{encoder(0)}}`)"><i class="fa fa-plus"></i> Buat Baru</button>
               </div>
               
             </div>
@@ -157,9 +159,9 @@
                             <th width="5%">No</th>
                             
                             <th width="5%"></th>
-                            <th width="9%">Cust Code</th>
-                            <th width="30%">Nama Customer</th>
-                            <th>Alamat</th>
+                            <th>Rak</th>
+                            <th>Lemari</th>
+                            <th width="15%">Total Dok</th>
                         </tr>
                     </thead>
                     
@@ -183,8 +185,8 @@
 @endsection
 
 @push('ajax')
-    <script> 
-      function delete_data(id,act){
+<script> 
+      function delete_data(id){
            
            swal({
                title: "Yakin menghapus data ini ?",
@@ -198,39 +200,26 @@
                closeOnConfirm: false
            }).then((willDelete) => {
                if (willDelete) {
-                    if(act=='0'){
+                   
                        $.ajax({
                            type: 'GET',
-                           url: "{{url('customer/delete')}}",
-                           data: "id="+id+"&act="+act,
+                           url: "{{url('master/rak/delete')}}",
+                           data: "id="+id,
                            success: function(msg){
                                swal("Success! berhasil terhapus!", {
                                    icon: "success",
                                });
                                var tables=$('#data-table-fixed-header').DataTable();
-                                  tables.ajax.url("{{ url('customer/getdata')}}").load();
+                                  tables.ajax.url("{{ url('master/rak/getdata')}}").load();
                            }
                        });
                    
-                    }else{
-                      $.ajax({
-                           type: 'GET',
-                           url: "{{url('customer/delete')}}",
-                           data: "id="+id+"&act="+act,
-                           success: function(msg){
-                               swal("Success! berhasil ditampilkan!", {
-                                   icon: "success",
-                               });
-                               var tables=$('#data-table-fixed-header').DataTable();
-                                  tables.ajax.url("{{ url('customer/getdata')}}?hide=1").load();
-                           }
-                       });
-                    }
+                    
                } else {
                    
                }
            });
            
        }   
-    </script>   
+    </script>       
 @endpush
