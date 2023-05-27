@@ -10,7 +10,7 @@
               </span>
             </a>
             <ul class="treeview-menu" style="display:@if(Request::is('master')==1 || Request::is('master/*')==1) block @endif">
-              <li ><a href="{{url('master')}}">&nbsp;<i class="fa  fa-sort-down"></i> Dokumen</a></li>
+              <li ><a href="{{url('master/dokumen')}}">&nbsp;<i class="fa  fa-sort-down"></i> Dokumen</a></li>
               <li ><a href="{{url('master/lemari')}}">&nbsp;<i class="fa  fa-sort-down"></i> Lemari</a></li>
               <li ><a href="{{url('master/rak')}}">&nbsp;<i class="fa  fa-sort-down"></i> Rak</a></li>
               
