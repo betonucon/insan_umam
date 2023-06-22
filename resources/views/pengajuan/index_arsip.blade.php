@@ -42,7 +42,6 @@
                             } 
                         },
                         
-                        { data: 'icon' },
                         { data: 'no_register' },
                         { data: 'nama' },
                         { data: 'dokumen' },
@@ -101,12 +100,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Dokumen Arsip Masuk
+        Dokumen 
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Dokumen Arsip</li>
+        <li class="active">Dokumen</li>
       </ol>
     </section>
 
@@ -156,7 +155,6 @@
                     <thead>
                         <tr>
                             <th width="5%">No</th>
-                            <th width="5%"></th>
                             <th width="15%">No Register</th>
                             <th >Nama</th>
                             <th width="20%">Dokumen</th>
