@@ -18,19 +18,8 @@
           </li>
           <li class="@if(Request::is('pengajuan')==1 || Request::is('pengajuan/view')==1 ) active @endif"><a href="{{url('pengajuan')}}"><i class="fa  fa-file-text-o text-white"></i> <span>SKMHT</span></a></li>
           <li class="@if(Request::is('pengajuan/riwayat')==1 ) active @endif"><a href="{{url('pengajuan/riwayat')}}"><i class="fa fa-history text-white"></i> <span>Riwayat SKMHT</span></a></li>
-          <li class="treeview  @if(Request::is('arsip')==1 || Request::is('arsip/*')==1) menu-open @endif">
-            <a href="#">
-              <i class="fa fa-paperclip text-white"></i> <span>Arsip</span>
-              <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-              </span>
-            </a>
-            <ul class="treeview-menu" style="display:@if(Request::is('arsip')==1 || Request::is('arsip/*')==1) block @endif">
-              <li ><a href="{{url('arsip')}}">&nbsp;<i class="fa  fa-sort-down"></i> Arsip Masuk</a></li>
-              <li ><a href="{{url('arsip/out')}}">&nbsp;<i class="fa  fa-sort-down"></i> Arsip Keluar</a></li>
-              
-            </ul>
-          </li>
+          <li class="@if(Request::is('arsip')==1 ) active @endif"><a href="{{url('arsip')}}"><i class="fa fa-history text-white"></i> <span>Dokumen</span></a></li>
+          
         @endif
 
       </ul>
